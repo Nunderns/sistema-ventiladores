@@ -1,5 +1,9 @@
 # React + TypeScript + Vite
 
+[![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
+
+Substitua `OWNER/REPO` pelo caminho do repositório no GitHub para que o badge funcione corretamente.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:
