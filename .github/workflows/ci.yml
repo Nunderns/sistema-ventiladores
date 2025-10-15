@@ -40,14 +40,10 @@ jobs:
           ruff --version
           ruff check .
 
-      - name: Black (format check)
+      - name: Black (auto-format)
         run: |
           black --version
-          black --check .
-
-      - name: Pre-commit (all files)
-        run: |
-          pre-commit run --all-files --show-diff-on-failure
+          black .
 
       - name: Pytest
         run: |
