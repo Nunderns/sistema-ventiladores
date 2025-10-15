@@ -8,9 +8,15 @@ from openai import OpenAI
 load_dotenv()
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+OPENROUTER_HTTP_REFERER = os.getenv("OPENROUTER_HTTP_REFERER", "http://localhost:5173")
+OPENROUTER_TITLE = os.getenv("OPENROUTER_TITLE", "Fabrica de Ventiladores")
 MODEL_NAME = os.getenv("OPENROUTER_MODEL", "openai/gpt-4o")
-HTTP_REFERER = os.getenv("OPENROUTER_HTTP_REFERER", "http://localhost:5173")
-RAW_TITLE = os.getenv("OPENROUTER_TITLE", "Fabrica de Ventiladores")
+
+print(f"🔑 API Key: {OPENROUTER_API_KEY[:5]}...{OPENROUTER_API_KEY[-5:] if OPENROUTER_API_KEY else 'N/A'}")
+print(f"🌐 HTTP Referer: {OPENROUTER_HTTP_REFERER}")
+print(f"🏷️  Title: {OPENROUTER_TITLE}")
+print(f"🤖 Model: {MODEL_NAME}")
+
 
 
 def _sanitize_ascii_header(value: str) -> str:
@@ -24,9 +30,9 @@ def _build_default_headers() -> Dict[str, str]:
     """Construir cabeçalhos padrão aceitos pelo OpenRouter."""
 
     return {
-        "HTTP-Referer": HTTP_REFERER,
+        "HTTP-Referer": OPENROUTER_HTTP_REFERER,
         # Cabeçalhos HTTP devem conter apenas caracteres ASCII.
-        "X-Title": _sanitize_ascii_header(RAW_TITLE),
+        "X-Title": _sanitize_ascii_header(OPENROUTER_TITLE),
     }
 
 

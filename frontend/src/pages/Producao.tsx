@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../api/api";
+import api from "../api/api";
 import type { Producao, ProducaoCreate } from "../types/Producao";
 import ProducaoCard from "../components/ProducaoCard";
 
@@ -12,8 +12,8 @@ export default function ProducaoPage() {
 
   useEffect(() => {
     api.get<Producao[]>("/producao")
-      .then((res) => setProducao(res.data))
-      .catch((err) => console.error("Erro ao buscar produção:", err));
+      .then((res: { data: Producao[] }) => setProducao(res.data))
+      .catch((err: Error) => console.error("Erro ao buscar produção:", err));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

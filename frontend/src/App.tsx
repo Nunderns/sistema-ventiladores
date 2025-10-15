@@ -21,6 +21,20 @@ export default function App() {
             {/* Links de navegação */}
             <ul className="flex space-x-4">
               <li>
+                  <NavLink
+                      to="/chat"
+                      className={({ isActive }) =>
+                        `px-3 py-2 rounded-md text-sm font-medium transition ${
+                          isActive
+                            ? "bg-white text-blue-700 shadow"
+                            : "hover:bg-blue-600 hover:text-white"
+                        }`
+                      }
+                    >
+                      Chat
+                    </NavLink>
+              </li>
+              <li>
                 <NavLink
                   to="/ventiladores"
                   className={({ isActive }) =>

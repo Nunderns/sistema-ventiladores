@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../api/api";
+import api from "../api/api";
 import type { Funcionario, FuncionarioCreate } from "../types/Funcionario";
 import FuncionarioCard from "../components/FuncionarioCard";
 
@@ -12,8 +12,8 @@ export default function Funcionarios() {
 
   useEffect(() => {
     api.get<Funcionario[]>("/funcionarios")
-      .then((res) => setFuncionarios(res.data))
-      .catch((err) => console.error("Erro ao buscar funcionários:", err));
+      .then((res: { data: Funcionario[] }) => setFuncionarios(res.data))
+      .catch((err: Error) => console.error("Erro ao buscar funcionários:", err));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

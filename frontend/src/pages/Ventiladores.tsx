@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../api/api";
+import api from "../api/api";
 import type { Ventilador, VentiladorCreate } from "../types/Ventilador";
 import VentiladorCard from "../components/VentiladorCard";
 
@@ -15,6 +15,15 @@ export default function Ventiladores() {
       .catch((err) => console.error("Erro ao carregar ventiladores:", err));
   }, []);
 
+  const carregarVentiladores = async () => {
+    try {
+      const res = await api.get<Ventilador[]>("/ventiladores");
+      setVentiladores(res.data);
+    } catch (err) {
+      console.error("Erro ao carregar ventiladores:", err);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const novoVentilador: VentiladorCreate = {
@@ -24,8 +33,8 @@ export default function Ventiladores() {
       funcionario_id: 1,
     };
     try {
-      const res = await api.post<Ventilador>("/ventiladores", novoVentilador);
-      setVentiladores((prev) => [...prev, res.data]);
+      await api.post<Ventilador>("/ventiladores", novoVentilador);
+      await carregarVentiladores();
       setModelo("");
       setNumeroSerie("");
       setDataFabricacao("");
@@ -33,6 +42,11 @@ export default function Ventiladores() {
       console.error("Erro ao criar ventilador:", err);
     }
   };
+
+  // Carregar ventiladores ao montar o componente
+  useEffect(() => {
+    carregarVentiladores();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">

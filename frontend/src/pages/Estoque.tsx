@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api } from "../api/api";
+import api from "../api/api";
 import type { Estoque, EstoqueCreate } from "../types/Estoque";
 import EstoqueCard from "../components/EstoqueCard";
 
@@ -11,8 +11,8 @@ export default function EstoquePage() {
 
   useEffect(() => {
     api.get<Estoque[]>("/estoque")
-      .then((res) => setEstoque(res.data))
-      .catch((err) => console.error("Erro ao buscar estoque:", err));
+      .then((res: { data: Estoque[] }) => setEstoque(res.data))
+      .catch((err: Error) => console.error("Erro ao buscar estoque:", err));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
