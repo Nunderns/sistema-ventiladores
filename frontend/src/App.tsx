@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, NavLink, Navigate } from "react-router-dom";
+import ChatPage from "./pages/Chat";
 import Ventiladores from "./pages/Ventiladores";
 import Funcionarios from "./pages/Funcionarios";
 import ProducaoPage from "./pages/Producao";
@@ -85,6 +86,7 @@ export default function App() {
         <div className="w-full max-w-6xl">
           <Routes>
             <Route path="/" element={<Navigate to="/chat" replace />} />
+            <Route path="/chat" element={<ChatPage />} />
             <Route path="/ventiladores" element={<Ventiladores />} />
             <Route path="/funcionarios" element={<Funcionarios />} />
             <Route path="/producao" element={<ProducaoPage />} />
