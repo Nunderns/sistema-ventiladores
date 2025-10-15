@@ -1,0 +1,78 @@
+import { useEffect, useState } from "react";
+import { api } from "../api/api";
+import type { Estoque, EstoqueCreate } from "../types/Estoque";
+import EstoqueCard from "../components/EstoqueCard";
+
+export default function EstoquePage() {
+  const [estoque, setEstoque] = useState<Estoque[]>([]);
+  const [ventiladorId, setVentiladorId] = useState("");
+  const [quantidade, setQuantidade] = useState("");
+  const [localizacao, setLocalizacao] = useState("");
+
+  useEffect(() => {
+    api.get<Estoque[]>("/estoque")
+      .then((res) => setEstoque(res.data))
+      .catch((err) => console.error("Erro ao buscar estoque:", err));
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const novo: EstoqueCreate = {
+      ventilador_id: Number(ventiladorId),
+      quantidade: Number(quantidade),
+      localizacao
+    };
+
+    try {
+      const res = await api.post<Estoque>("/estoque", novo);
+      setEstoque((prev) => [...prev, res.data]);
+      setVentiladorId("");
+      setQuantidade("");
+      setLocalizacao("");
+    } catch (err) {
+      console.error("Erro ao adicionar estoque:", err);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <h1 className="text-3xl font-bold mb-4 text-gray-800">📦 Estoque</h1>
+
+      <form onSubmit={handleSubmit} className="mb-6 bg-white p-4 rounded shadow max-w-lg">
+        <input
+          type="number"
+          placeholder="ID do Ventilador"
+          value={ventiladorId}
+          onChange={(e) => setVentiladorId(e.target.value)}
+          className="w-full border p-2 rounded mb-3"
+          required
+        />
+        <input
+          type="number"
+          placeholder="Quantidade"
+          value={quantidade}
+          onChange={(e) => setQuantidade(e.target.value)}
+          className="w-full border p-2 rounded mb-3"
+          required
+        />
+        <input
+          type="text"
+          placeholder="Localização"
+          value={localizacao}
+          onChange={(e) => setLocalizacao(e.target.value)}
+          className="w-full border p-2 rounded mb-3"
+          required
+        />
+        <button type="submit" className="bg-purple-600 text-white px-4 py-2 rounded">
+          Adicionar
+        </button>
+      </form>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {estoque.map((e) => (
+          <EstoqueCard key={e.id} estoque={e} />
+        ))}
+      </div>
+    </div>
+  );
+}
