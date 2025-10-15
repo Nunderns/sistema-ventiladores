@@ -51,6 +51,19 @@ def obter_producao(producao_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Produção não encontrada")
     return producao
 
+@router.put("/{producao_id}", response_model=ProducaoResponse)
+def atualizar_producao(producao_id: int, data: ProducaoCreate, db: Session = Depends(get_db)):
+    producao = db.query(Producao).filter(Producao.id == producao_id).first()
+    if not producao:
+        raise HTTPException(status_code=404, detail="Produ��ǜo nǜo encontrada")
+    producao.ventilador_id = data.ventilador_id
+    producao.funcionario_id = data.funcionario_id
+    producao.data_producao = data.data_producao
+    producao.turno = data.turno
+    db.commit()
+    db.refresh(producao)
+    return producao
+
 @router.delete("/{producao_id}")
 def deletar_producao(producao_id: int, db: Session = Depends(get_db)):
     producao = db.query(Producao).filter(Producao.id == producao_id).first()

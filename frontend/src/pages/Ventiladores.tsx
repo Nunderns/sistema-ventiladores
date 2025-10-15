@@ -43,6 +43,30 @@ export default function Ventiladores() {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    if (!confirm("Confirma excluir o ventilador?")) return;
+    try {
+      await api.delete(`/ventiladores/${id}`);
+      await carregarVentiladores();
+    } catch (err) {
+      console.error("Erro ao excluir ventilador:", err);
+    }
+  };
+
+  const handleEdit = async (v: Ventilador) => {
+    const novoModelo = prompt("Modelo", v.modelo) ?? v.modelo;
+    const novoNumero = prompt("Número de série", v.numero_serie) ?? v.numero_serie;
+    const novaData = prompt("Data de fabricação (YYYY-MM-DD)", v.data_fabricacao.slice(0,10)) ?? v.data_fabricacao;
+    try {
+      await api.put(`/ventiladores/${v.id}`,
+        { modelo: novoModelo, numero_serie: novoNumero, data_fabricacao: novaData, funcionario_id: v.funcionario_id }
+      );
+      await carregarVentiladores();
+    } catch (err) {
+      console.error("Erro ao editar ventilador:", err);
+    }
+  };
+
   // Carregar ventiladores ao montar o componente
   useEffect(() => {
     carregarVentiladores();
@@ -90,7 +114,7 @@ export default function Ventiladores() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {ventiladores.map((v) => (
-          <VentiladorCard key={v.id} ventilador={v} />
+          <VentiladorCard key={v.id} ventilador={v} onEdit={handleEdit} onDelete={handleDelete} />
         ))}
       </div>
     </div>

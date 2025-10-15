@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.db import SessionLocal, Ventilador, Funcionario, Producao, Estoque
+from app.db import SessionLocal, Ventilador
 from datetime import date
 from pydantic import BaseModel
 
@@ -64,6 +64,19 @@ def obter_ventilador(ventilador_id: int, db: Session = Depends(get_db)):
     ventilador = db.query(Ventilador).filter(Ventilador.id == ventilador_id).first()
     if not ventilador:
         raise HTTPException(status_code=404, detail="Ventilador não encontrado")
+    return ventilador
+
+@router.put("/{ventilador_id}", response_model=VentiladorResponse)
+def atualizar_ventilador(ventilador_id: int, data: VentiladorCreate, db: Session = Depends(get_db)):
+    ventilador = db.query(Ventilador).filter(Ventilador.id == ventilador_id).first()
+    if not ventilador:
+        raise HTTPException(status_code=404, detail="Ventilador nǜo encontrado")
+    ventilador.modelo = data.modelo
+    ventilador.numero_serie = data.numero_serie
+    ventilador.data_fabricacao = data.data_fabricacao
+    ventilador.funcionario_id = data.funcionario_id
+    db.commit()
+    db.refresh(ventilador)
     return ventilador
 
 @router.delete("/{ventilador_id}")

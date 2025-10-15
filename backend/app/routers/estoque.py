@@ -51,6 +51,19 @@ def obter_item(estoque_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Item do estoque não encontrado")
     return estoque
 
+@router.put("/{estoque_id}", response_model=EstoqueResponse)
+def atualizar_item(estoque_id: int, data: EstoqueCreate, db: Session = Depends(get_db)):
+    estoque = db.query(Estoque).filter(Estoque.id == estoque_id).first()
+    if not estoque:
+        raise HTTPException(status_code=404, detail="Item do estoque nǜo encontrado")
+    estoque.ventilador_id = data.ventilador_id
+    estoque.quantidade = data.quantidade
+    estoque.localizacao = data.localizacao
+    estoque.data_entrada = data.data_entrada
+    db.commit()
+    db.refresh(estoque)
+    return estoque
+
 @router.delete("/{estoque_id}")
 def deletar_item(estoque_id: int, db: Session = Depends(get_db)):
     estoque = db.query(Estoque).filter(Estoque.id == estoque_id).first()

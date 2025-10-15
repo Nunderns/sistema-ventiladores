@@ -34,6 +34,34 @@ export default function EstoquePage() {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    if (!confirm("Confirma excluir o item do estoque?")) return;
+    try {
+      await api.delete(`/estoque/${id}`);
+      setEstoque((prev) => prev.filter((e) => e.id !== id));
+    } catch (err) {
+      console.error("Erro ao excluir item do estoque:", err);
+    }
+  };
+
+  const handleEdit = async (e: Estoque) => {
+    const novoVent = prompt("Ventilador ID", String(e.ventilador_id)) ?? String(e.ventilador_id);
+    const novaQtd = prompt("Quantidade", String(e.quantidade)) ?? String(e.quantidade);
+    const novaLoc = prompt("Localização", e.localizacao) ?? e.localizacao;
+    const novaData = prompt("Data de entrada (YYYY-MM-DD)", e.data_entrada.slice(0,10)) ?? e.data_entrada;
+    try {
+      const res = await api.put(`/estoque/${e.id}`, {
+        ventilador_id: Number(novoVent),
+        quantidade: Number(novaQtd),
+        localizacao: novaLoc,
+        data_entrada: novaData,
+      });
+      setEstoque((prev) => prev.map((x) => (x.id === e.id ? res.data : x)));
+    } catch (err) {
+      console.error("Erro ao editar item do estoque:", err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <h1 className="text-3xl font-bold mb-4 text-gray-800">📦 Estoque</h1>
@@ -70,7 +98,7 @@ export default function EstoquePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {estoque.map((e) => (
-          <EstoqueCard key={e.id} estoque={e} />
+          <EstoqueCard key={e.id} estoque={e} onEdit={handleEdit} onDelete={handleDelete} />
         ))}
       </div>
     </div>

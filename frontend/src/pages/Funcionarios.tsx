@@ -38,6 +38,35 @@ export default function Funcionarios() {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    if (!confirm("Confirma excluir o funcionário?")) return;
+    try {
+      await api.delete(`/funcionarios/${id}`);
+      setFuncionarios((prev) => prev.filter((f) => f.id !== id));
+    } catch (err) {
+      console.error("Erro ao excluir funcionário:", err);
+    }
+  };
+
+  const handleEdit = async (f: Funcionario) => {
+    const novoNome = prompt("Nome", f.nome) ?? f.nome;
+    const novoCargo = prompt("Cargo", f.cargo) ?? f.cargo;
+    const novoCpf = prompt("CPF", f.cpf) ?? f.cpf;
+    const novaData = prompt("Data de admissão (YYYY-MM-DD)", f.data_admissao.slice(0,10)) ?? f.data_admissao;
+    try {
+      const res = await api.put(`/funcionarios/${f.id}`, {
+        nome: novoNome,
+        cargo: novoCargo,
+        cpf: novoCpf,
+        data_admissao: novaData,
+        ativo: f.ativo,
+      });
+      setFuncionarios((prev) => prev.map((x) => (x.id === f.id ? res.data : x)));
+    } catch (err) {
+      console.error("Erro ao editar funcionário:", err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <h1 className="text-3xl font-bold mb-4 text-gray-800">👷 Funcionários</h1>
@@ -81,7 +110,7 @@ export default function Funcionarios() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {funcionarios.map((f) => (
-          <FuncionarioCard key={f.id} funcionario={f} />
+          <FuncionarioCard key={f.id} funcionario={f} onEdit={handleEdit} onDelete={handleDelete} />
         ))}
       </div>
     </div>

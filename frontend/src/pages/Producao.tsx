@@ -37,6 +37,34 @@ export default function ProducaoPage() {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    if (!confirm("Confirma excluir o registro de produção?")) return;
+    try {
+      await api.delete(`/producao/${id}`);
+      setProducao((prev) => prev.filter((p) => p.id !== id));
+    } catch (err) {
+      console.error("Erro ao excluir produção:", err);
+    }
+  };
+
+  const handleEdit = async (p: Producao) => {
+    const novoVent = prompt("Ventilador ID", String(p.ventilador_id)) ?? String(p.ventilador_id);
+    const novoFunc = prompt("Funcionário ID", String(p.funcionario_id)) ?? String(p.funcionario_id);
+    const novaData = prompt("Data de produção (YYYY-MM-DD)", p.data_producao.slice(0,10)) ?? p.data_producao;
+    const novoTurno = prompt("Turno", p.turno) ?? p.turno;
+    try {
+      const res = await api.put(`/producao/${p.id}`, {
+        ventilador_id: Number(novoVent),
+        funcionario_id: Number(novoFunc),
+        data_producao: novaData,
+        turno: novoTurno,
+      });
+      setProducao((prev) => prev.map((x) => (x.id === p.id ? res.data : x)));
+    } catch (err) {
+      console.error("Erro ao editar produção:", err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <h1 className="text-3xl font-bold mb-4 text-gray-800">🏭 Produção</h1>
@@ -80,7 +108,7 @@ export default function ProducaoPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {producao.map((p) => (
-          <ProducaoCard key={p.id} producao={p} />
+          <ProducaoCard key={p.id} producao={p} onEdit={handleEdit} onDelete={handleDelete} />
         ))}
       </div>
     </div>
